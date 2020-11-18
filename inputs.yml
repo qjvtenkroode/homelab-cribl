@@ -1,0 +1,14 @@
+inputs:
+  pfsense:
+    disabled: false
+    host: 0.0.0.0
+    maxBufferSize: 1000
+    ipWhitelistRegex: /.*/
+    timestampTimezone: local
+    singleMsgUdpPackets: false
+    enableProxyHeader: false
+    tls:
+      disabled: true
+    type: syslog
+    udpPort: 2300
+    pipeline: devnull
