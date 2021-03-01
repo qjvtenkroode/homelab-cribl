@@ -1,15 +1,60 @@
 id: homelab
-groups: {}
+groups:
+  nomad:
+    name: Nomad - HEC
+    description: All Nomad HEC data routes
+    index: 0
 routes:
-  - id: RVq5Bl
-    name: Nomad - hec
+  - id: bitwardenrs
+    name: bitwardenrs
     final: true
     disabled: false
-    pipeline: nomad_hec-raw
-    description: Route all nomad hec data to parse and split everything off
+    pipeline: nomad_bitwardenrs
+    description: Nomad HEC data for bitwardenrs
     clones: []
-    filter: __inputId=='splunk_hec:nomad_hec'
+    filter: __inputId=='splunk_hec:nomad_hec' && source=='bitwardenrs'
     output: default
+    groupId: nomad
+  - id: mqtt
+    name: mqtt
+    final: true
+    disabled: false
+    pipeline: nomad_mqtt
+    description: Nomad HEC data for mqtt
+    clones: []
+    filter: __inputId=='splunk_hec:nomad_hec' && source=='mqtt'
+    output: default
+    groupId: nomad
+  - id: qkroodenl
+    name: qkroode.nl
+    final: true
+    disabled: false
+    pipeline: nomad_qkroode-nl
+    description: Nomad HEC data for qkroode.nl
+    clones: []
+    filter: __inputId=='splunk_hec:nomad_hec' && source=='qkroode.nl'
+    output: default
+    groupId: nomad
+  - id: registry
+    name: registry
+    final: true
+    disabled: false
+    pipeline: nomad_registry
+    description: Nomad HEC data for registry
+    clones: []
+    filter: __inputId=='splunk_hec:nomad_hec' && source=='registry'
+    output: default
+    groupId: nomad
+  - id: traefik
+    name: traefik
+    final: true
+    disabled: false
+    pipeline: nomad_traefik
+    description: Nomad HEC data for traefik
+    clones: []
+    filter: __inputId=='splunk_hec:nomad_hec' && source=='traefik'
+    output: default
+    groupId: nomad
   - id: default
     name: default
     final: true

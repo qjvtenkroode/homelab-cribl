@@ -2,4 +2,4 @@ output: default
 groups: {}
 asyncFuncTimeout: 1000
 functions: []
-description: Raw event stream from Nomad
+description: Raw event stream from mqtt

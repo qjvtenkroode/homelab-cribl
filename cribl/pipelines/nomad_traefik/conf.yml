@@ -1,0 +1,5 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions: []
+description: Raw event stream from traefik
