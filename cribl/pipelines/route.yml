@@ -2,21 +2,21 @@ id: homelab
 groups: {}
 routes:
   - id: RVq5Bl
-     name: Nomad - hec
-     final: true
-     disabled: false
-     pipeline: nomad_hec-raw
-     description: Route all nomad hec data to parse and split everything off
-     clones: []
-     filter: __inputId=='splunk_hec:nomad_hec'
-     output: default
+    name: Nomad - hec
+    final: true
+    disabled: false
+    pipeline: nomad_hec-raw
+    description: Route all nomad hec data to parse and split everything off
+    clones: []
+    filter: __inputId=='splunk_hec:nomad_hec'
+    output: default
   - id: default
-     name: default
-     final: true
-     disabled: false
-     pipeline: main
-     description: ""
-     clones: []
-     filter: "true"
-     output: default
+    name: default
+    final: true
+    disabled: false
+    pipeline: main
+    description: ""
+    clones: []
+    filter: "true"
+    output: default
  
