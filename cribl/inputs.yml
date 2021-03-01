@@ -25,3 +25,16 @@ inputs:
     authTokens:
       - token: "#42:q+BbLimZncjhn7g/cq0XgiTrUXc9elfxoGJ6f11wMhVaKvXIEZoO+Hg074B1xO6G\
           vQx7jd7JrV89jtJQSOLRiA=="
+  traefik:
+    disabled: false
+    dimensionList:
+      - host
+      - source
+    discoveryType: static
+    interval: 1
+    logLevel: info
+    keepAliveTime: 60
+    maxMissedKeepAlives: 3
+    targetList:
+      - traefik.service.consul:8082
+    type: prometheus
