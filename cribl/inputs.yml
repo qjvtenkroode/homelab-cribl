@@ -31,7 +31,7 @@ inputs:
       - host
       - source
     discoveryType: static
-    interval: 1
+    interval: 15
     logLevel: info
     keepAliveTime: 60
     maxMissedKeepAlives: 3
