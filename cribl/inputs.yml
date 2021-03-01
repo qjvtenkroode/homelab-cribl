@@ -12,3 +12,16 @@ inputs:
     type: syslog
     udpPort: 2300
     pipeline: devnull
+  nomad_hec:
+    disabled: false
+    host: 0.0.0.0
+    tls:
+      disabled: true
+    splunkHecAPI: /services/collector
+    splunkHecAcks: false
+    staleChannelFlushMs: 10000
+    type: splunk_hec
+    port: 2400
+    authTokens:
+      - token: "#42:q+BbLimZncjhn7g/cq0XgiTrUXc9elfxoGJ6f11wMhVaKvXIEZoO+Hg074B1xO6G\
+          vQx7jd7JrV89jtJQSOLRiA=="
