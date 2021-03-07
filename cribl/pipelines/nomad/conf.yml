@@ -1,0 +1,28 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Unroll the Nomad JSON and remove some overhead fields from the raw
+        message before sending it off into different routes.
+  - id: serde
+    filter: "true"
+    disabled: null
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+      remove:
+        - source
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: line
+          value: line.replace(/\"/g,"")
+    description: Remove all inserted quotes since they make the parser fail
+description: Pre-parse all nomad data

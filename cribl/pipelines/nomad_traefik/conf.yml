@@ -1,5 +1,60 @@
 output: default
 groups: {}
 asyncFuncTimeout: 1000
-functions: []
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Common Log Format - <remote_IP_address> -
+        <client_user_name_if_available> [<timestamp>] "<request_method>
+        <request_path> <request_protocol>" <origin_server_HTTP_status>
+        <origin_server_content_size> "<request_referrer>" "<request_user_agent>"
+        <number_of_requests_received_since_Traefik_started>
+        "<Traefik_router_name>" "<Traefik_server_URL>"
+        <request_duration_in_ms>ms
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: line
+      iterations: 100
+      overwrite: false
+      regex: /^(?<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s/
+      regexList:
+        - regex: /[^\s]+\s[^\s]+\s[^\s]+\s\[(?<time>[^\]]+)\]/
+  - id: auto_timestamp
+    filter: "true"
+    disabled: false
+    conf:
+      srcField: line
+      dstField: _time
+      defaultTimezone: Europe/Amsterdam
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+  - id: dns_lookup
+    filter: "true"
+    disabled: false
+    conf:
+      dnsLookupFields:
+        - resourceRecordType: A
+      reverseLookupFields:
+        - inFieldName: src_ip
+          outFieldName: src_host
+      cacheTTL: 30
+      maxCacheSize: 5000
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: _raw
+          value: line.replace(/[^\s]+\s[^\s]+\s[^\s]+\s[^\s]+\s[^\s]+\s/,"")
+      remove:
+        - line
+        - time
 description: Raw event stream from traefik

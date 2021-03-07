@@ -1,5 +1,46 @@
 output: default
 groups: {}
 asyncFuncTimeout: 1000
-functions: []
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: First get all types and set these as sourcetypes. Then do further
+        parsing of data an cleaning it up, stripping all fields that er there.
+  - id: regex_extract
+    filter: "true"
+    disabled: null
+    conf:
+      source: line
+      iterations: 100
+      overwrite: false
+      regex: /\[(?<time>[^\]]+)\]\[(?<type>[^\]]+)\]\[(?<log_level>[^\]]+)\]/
+    description: Extract the first fields
+  - id: auto_timestamp
+    filter: "true"
+    disabled: false
+    conf:
+      srcField: time
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - name: sourcetype
+          value: type
+        - name: _raw
+          value: line.replace(/[^\s]+\s[^\s]+\s/,"")
+      remove:
+        - line
+        - time
+        - type
 description: Raw event stream from bitwardenrs

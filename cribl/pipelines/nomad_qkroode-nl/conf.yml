@@ -1,5 +1,114 @@
 output: default
-groups: {}
+groups:
+  MpApFq:
+    name: access_logs
+    index: 3
+  80qFsL:
+    name: error_logs
+    index: 4
 asyncFuncTimeout: 1000
-functions: []
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: Split errors and access_logs and clean up _raw.
+  - id: eval
+    filter: line.match(/\[error\]/).length > 0
+    disabled: null
+    conf:
+      add:
+        - name: sourcetype
+          value: '"error_log"'
+    description: Set sourcetype=error_log
+  - id: eval
+    filter: line.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/).length > 0
+    disabled: null
+    conf:
+      add:
+        - name: sourcetype
+          value: '"access_log"'
+    description: Set sourcetype=access_log
+  - id: regex_extract
+    filter: sourcetype=="access_log"
+    disabled: null
+    conf:
+      source: line
+      iterations: 100
+      overwrite: false
+      regex: /(?<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/m
+      regexList:
+        - regex: /\[(?<time>[^\]]+)\]/
+    groupId: MpApFq
+  - id: auto_timestamp
+    filter: sourcetype=="access_log"
+    disabled: null
+    conf:
+      srcField: time
+      dstField: _time
+      defaultTimezone: local
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+    groupId: MpApFq
+  - id: dns_lookup
+    filter: sourcetype=="access_log"
+    disabled: null
+    conf:
+      dnsLookupFields:
+        - resourceRecordType: A
+      reverseLookupFields:
+        - inFieldName: src_ip
+          outFieldName: src_host
+      cacheTTL: 30
+      maxCacheSize: 5000
+    groupId: MpApFq
+  - id: eval
+    filter: sourcetype=="access_log"
+    disabled: null
+    conf:
+      add:
+        - value: line.replace(/[^\]]+\]\s/,"")
+          name: _raw
+      remove:
+        - line
+        - time
+    groupId: MpApFq
+  - id: regex_extract
+    filter: sourcetype=="error_log"
+    disabled: null
+    conf:
+      source: line
+      iterations: 100
+      overwrite: false
+      regex: /^(?<time>[^\s]+\s[^\s]+)\s/
+    groupId: 80qFsL
+  - id: auto_timestamp
+    filter: sourcetype=="error_log"
+    disabled: null
+    conf:
+      srcField: time
+      dstField: _time
+      defaultTimezone: utc
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
+    groupId: 80qFsL
+  - id: eval
+    filter: sourcetype=="error_log"
+    disabled: null
+    conf:
+      add:
+        - name: _raw
+          value: line.replace(/[^\s]+\s[^\s]+\s[^\s]+\s/,"")
+      remove:
+        - line
+        - time
+    groupId: 80qFsL
 description: Raw event stream from qkroode.nl

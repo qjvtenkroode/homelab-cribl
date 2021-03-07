@@ -1,4 +1,4 @@
-id: homelab
+id: default
 groups:
   nomad:
     name: Nomad - HEC
